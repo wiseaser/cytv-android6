@@ -1,0 +1,17 @@
+# Build output
+build/
+launcher.apk
+launcher.apk.idsig
+*.apk
+*.idsig
+*.keystore
+
+# Gradle (only needed if you build with it instead of build.sh)
+.gradle/
+local.properties
+
+# Editor and OS noise
+.idea/
+*.iml
+.DS_Store
+Thumbs.db
