@@ -1,5 +1,9 @@
 # CleanYourTV for Android 6
 
+> **Not maintained.** Published as-is, for anyone who finds it useful. Issues and pull
+> requests may go unanswered. For anything upstream-related, use
+> [the original project](https://github.com/Gathin23/cleanyourtv).
+
 A fork of [Gathin23/cleanyourtv](https://github.com/Gathin23/cleanyourtv) that runs on
 **Android 6.0.1 (API 23)**.
 
@@ -23,7 +27,7 @@ rows, no background service.
 | Connectivity callbacks | `registerDefaultNetworkCallback` only | version-guarded fallback |
 | RecyclerView | 1.3.2 | **1.2.1** (see `libs/README.md`) |
 | App discovery | `LEANBACK_LAUNCHER` only | also merges `LAUNCHER` when few TV entries are found |
-| Input switching | passthrough channel URI | falls back to the vendor source panel on firmware that needs it |
+| Input switching | passthrough channel URI | vendor-specific handling, see below |
 | F1 race calendar | included | **removed** |
 
 Fonts, festival skins, sunrise/sunset backsplash and the clock screensaver all still work.
@@ -38,8 +42,11 @@ Verified by hand on one device:
 - **Xiaomi Mi TV 4 (MiTV4-ANSM0, `xmen`)**, Android 6.0.1, firmware `2057`, Amlogic platform
 
 That is the only configuration tested. Other Android 6 sets will probably work, but the
-panel layout and the input-switching fallback were tuned against this one. If you try it
-elsewhere and something misbehaves, an issue with `adb logcat` output is welcome.
+panel layout and the input-switching fallback were tuned against this one.
+
+**This fork is published as-is and is not actively maintained.** Issues and pull requests
+may go unanswered. If it does not work on your set, the upstream project is the better
+place to ask.
 
 ## Install
 
@@ -106,6 +113,32 @@ A theme can drop a `config.json` into the app's external files directory:
 
 It controls dock apps, grid columns, wallpaper rotation, theme colours and card modules.
 See upstream's `themes/` for examples.
+
+## Input switching
+
+The Inputs pill lists what `TvInputManager` reports and switches with the standard
+passthrough channel URI. Some firmware on this generation of TV reports a single HDMI
+input whose port number does not match the label shown in the UI, and the channel URI
+resolves to nothing — you get a "this TV does not support this feature" message.
+
+Two changes handle that:
+
+1. **Vendor source panel first.** When the firmware exposes its own source panel as a
+   broadcast receiver (`com.xiaomi.mitv.settings.INPUTSOURCE_POPUP`), the pill sends that
+   broadcast instead of drawing its own menu. The panel lists every physical port, so the
+   port you pick is the port you get.
+2. **Vendor source number mapping.** For the one input id this firmware does register
+   (`Hdmi1InputService/HW5`), the launcher falls back to the vendor player's
+   `EXTSRC_PLAY` action with the source number the firmware actually uses (25 on this
+   model, which drives HDMI3, not HDMI1).
+
+Both are keyed to a specific firmware build. On a set from another vendor, or another
+firmware of the same model, the panel broadcast may not exist and the mapping may differ.
+In that case the launcher falls back to the standard passthrough path, which is what
+upstream does.
+
+If inputs do not switch on your set, that is the area to look at — but see the note above
+about this fork not being actively maintained.
 
 ## Notes
 
