@@ -1,4 +1,4 @@
-# CleanYourTV for Android 6
+# Clean Your TV for Android 6 (API 23)
 
 > **Not maintained.** Published as-is, for anyone who finds it useful. Issues and pull
 > requests may go unanswered. For anything upstream-related, use
